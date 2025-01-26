@@ -5,11 +5,16 @@ document.addEventListener('DOMContentLoaded', function () {
     const taskInput  = document.getElementById('task-input');
     const taskList = document.getElementById('task-list');
 
-    function addTask () {
-        let taskText = taskInput.value.trim();
+    function loadTasks() {
+        const storedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+        storedTasks.forEach(taskText => addTask(taskText, false)); // 'false' indicates not to save again to Local Storage
+    }
+
+    function addTask(taskText, save = true) {
+         taskText = taskInput.value.trim();
 
         if(taskText === ""){
-            alert("enter a task")
+            // alert("enter a task")
         }else{
             const li = document.createElement("li");
             li.textContent = taskText;
@@ -26,6 +31,19 @@ document.addEventListener('DOMContentLoaded', function () {
 
             btn.addEventListener('click', function(){
                 btn.parentElement.remove();
+
+                let newString = btn.parentElement.textContent.replace("Remove", "");
+
+                const storedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+
+                storedTasks.forEach(taskText => () => {
+
+                    if(taskText === newString){
+                        console.log(` yes this is ${newString}`)
+                    }
+
+                }
+                ); // 'false' indicates not to save again to Local Storage
             })
 
             li.appendChild(btn);
@@ -33,6 +51,12 @@ document.addEventListener('DOMContentLoaded', function () {
             taskList.appendChild(li);
 
             taskInput.value = "";
+        }
+
+        if (save) {
+        const storedTasks = JSON.parse(localStorage.getItem('tasks') || '[]');
+        storedTasks.push(taskText);
+        localStorage.setItem('tasks', JSON.stringify(storedTasks));
         }
     }
 
@@ -47,5 +71,7 @@ document.addEventListener('DOMContentLoaded', function () {
     })
 
     addTask();
+
+    loadTasks();
 
 })
